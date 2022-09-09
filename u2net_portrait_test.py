@@ -26,9 +26,7 @@ def normPRED(d):
     ma = torch.max(d)
     mi = torch.min(d)
 
-    dn = (d-mi)/(ma-mi)
-
-    return dn
+    return (d-mi)/(ma-mi)
 
 def save_output(image_name,pred,d_dir):
 
@@ -44,12 +42,12 @@ def save_output(image_name,pred,d_dir):
     pb_np = np.array(imo)
 
     aaa = img_name.split(".")
-    bbb = aaa[0:-1]
+    bbb = aaa[:-1]
     imidx = bbb[0]
     for i in range(1,len(bbb)):
-        imidx = imidx + "." + bbb[i]
+        imidx = f"{imidx}.{bbb[i]}"
 
-    imo.save(d_dir+'/'+imidx+'.png')
+    imo.save(f'{d_dir}/{imidx}.png')
 
 def main():
 
@@ -64,7 +62,7 @@ def main():
 
     model_dir = './saved_models/u2net_portrait/u2net_portrait.pth'
 
-    img_name_list = glob.glob(image_dir+'/*')
+    img_name_list = glob.glob(f'{image_dir}/*')
     print("Number of images: ", len(img_name_list))
 
     # --------- 2. dataloader ---------

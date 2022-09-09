@@ -26,9 +26,7 @@ def normPRED(d):
     ma = torch.max(d)
     mi = torch.min(d)
 
-    dn = (d-mi)/(ma-mi)
-
-    return dn
+    return (d-mi)/(ma-mi)
 
 def save_output(image_name,pred,d_dir):
 
@@ -44,10 +42,10 @@ def save_output(image_name,pred,d_dir):
     pb_np = np.array(imo)
 
     aaa = img_name.split(".")
-    bbb = aaa[0:-1]
+    bbb = aaa[:-1]
     imidx = bbb[0]
     for i in range(1,len(bbb)):
-        imidx = imidx + "." + bbb[i]
+        imidx = f"{imidx}.{bbb[i]}"
 
     imo.save(d_dir+imidx+'.png')
 
@@ -59,8 +57,14 @@ def main():
 
 
     image_dir = os.path.join(os.getcwd(), 'test_data', 'test_images')
-    prediction_dir = os.path.join(os.getcwd(), 'test_data', model_name + '_results' + os.sep)
-    model_dir = os.path.join(os.getcwd(), 'saved_models', model_name, model_name + '.pth')
+    prediction_dir = os.path.join(
+        os.getcwd(), 'test_data', f'{model_name}_results{os.sep}'
+    )
+
+    model_dir = os.path.join(
+        os.getcwd(), 'saved_models', model_name, f'{model_name}.pth'
+    )
+
 
     img_name_list = glob.glob(image_dir + os.sep + '*')
     print(img_name_list)
