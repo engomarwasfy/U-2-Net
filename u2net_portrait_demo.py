@@ -19,7 +19,7 @@ def detect_single_face(face_cascade,img):
     # filter to keep the largest face
     wh = 0
     idx = 0
-    for i in range(0,len(faces)):
+    for i in range(len(faces)):
         (x,y,w,h) = faces[i]
         if(wh<w*h):
             idx = i
@@ -35,7 +35,7 @@ def crop_face(img, face):
         return img
     (x, y, w, h) = face
 
-    height,width = img.shape[0:2]
+    height,width = img.shape[:2]
 
     # crop the face with a bigger bbox
     hmw = h - w
@@ -75,7 +75,7 @@ def crop_face(img, face):
     im_face = np.pad(im_face,((t,b),(l,r),(0,0)),mode='constant',constant_values=((255,255),(255,255),(255,255)))
 
     # pad to achieve image with square shape for avoding face deformation after resizing
-    hf,wf = im_face.shape[0:2]
+    hf,wf = im_face.shape[:2]
     if(hf-2>wf):
         wfp = int((hf-wf)/2)
         im_face = np.pad(im_face,((0,0),(wfp,wfp),(0,0)),mode='constant',constant_values=((255,255),(255,255),(255,255)))
@@ -92,9 +92,7 @@ def normPRED(d):
     ma = torch.max(d)
     mi = torch.min(d)
 
-    dn = (d-mi)/(ma-mi)
-
-    return dn
+    return (d-mi)/(ma-mi)
 
 def inference(net,input):
 
@@ -157,19 +155,22 @@ def main():
     net.eval()
 
     # do the inference one-by-one
-    for i in range(0,len(im_list)):
+    for i in range(len(im_list)):
         print("--------------------------")
         print("inferencing ", i, "/", len(im_list), im_list[i])
 
         # load each image
         img = cv2.imread(im_list[i])
-        height,width = img.shape[0:2]
+        height,width = img.shape[:2]
         face = detect_single_face(face_cascade,img)
         im_face = crop_face(img, face)
         im_portrait = inference(net,im_face)
 
         # save the output
-        cv2.imwrite(out_dir+"/"+im_list[i].split('/')[-1][0:-4]+'.png',(im_portrait*255).astype(np.uint8))
+        cv2.imwrite(
+            f"{out_dir}/" + im_list[i].split('/')[-1][:-4] + '.png',
+            (im_portrait * 255).astype(np.uint8),
+        )
 
 if __name__ == '__main__':
     main()

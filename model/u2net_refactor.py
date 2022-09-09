@@ -64,15 +64,15 @@ class RSU(nn.Module):
         self.add_module('rebnconvin', REBNCONV(in_ch, out_ch))
         self.add_module('downsample', nn.MaxPool2d(2, stride=2, ceil_mode=True))
 
-        self.add_module(f'rebnconv1', REBNCONV(out_ch, mid_ch))
-        self.add_module(f'rebnconv1d', REBNCONV(mid_ch * 2, out_ch))
+        self.add_module('rebnconv1', REBNCONV(out_ch, mid_ch))
+        self.add_module('rebnconv1d', REBNCONV(mid_ch * 2, out_ch))
 
         for i in range(2, height):
-            dilate = 1 if not dilated else 2 ** (i - 1)
+            dilate = 2 ** (i - 1) if dilated else 1
             self.add_module(f'rebnconv{i}', REBNCONV(mid_ch, mid_ch, dilate=dilate))
             self.add_module(f'rebnconv{i}d', REBNCONV(mid_ch * 2, mid_ch, dilate=dilate))
 
-        dilate = 2 if not dilated else 2 ** (height - 1)
+        dilate = 2 ** (height - 1) if dilated else 2
         self.add_module(f'rebnconv{height}', REBNCONV(mid_ch, mid_ch, dilate=dilate))
 
 
